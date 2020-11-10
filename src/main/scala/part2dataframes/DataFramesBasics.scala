@@ -19,5 +19,9 @@ object DataFramesBasics extends App {
 
   // showing a Data Frame
   firstDF.show()
+  firstDF.printSchema()
+
+  // get rows
+  firstDF.take(10).foreach(println)
 
 }
