@@ -1,6 +1,7 @@
 package part2dataframes
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.{DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 
 object DataFramesBasics extends App {
 
@@ -23,5 +24,26 @@ object DataFramesBasics extends App {
 
   // get rows
   firstDF.take(10).foreach(println)
+
+  // spark types
+  val longType = LongType
+
+  // schema
+  val carsSchema = StructType(Array(
+    StructField("Name", StringType),
+    StructField("Miles_per_Gallon", IntegerType),
+    StructField("Cylinders", IntegerType),
+    StructField("Displacement", IntegerType),
+    StructField("Horsepower", IntegerType),
+    StructField("Weight_in_lbs", IntegerType),
+    StructField("Acceleration", DoubleType),
+    StructField("Year", StringType),
+    StructField("Origin", StringType)
+  ))
+
+  // obtain a schema
+  val carsDFSchema = firstDF.schema
+  println(carsDFSchema)
+
 
 }
