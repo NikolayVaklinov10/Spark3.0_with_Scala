@@ -43,7 +43,13 @@ object DataFramesBasics extends App {
 
   // obtain a schema
   val carsDFSchema = firstDF.schema
-  println(carsDFSchema)
+
+  // read a DF with my own schema
+  val carsDFWithSchema = spark.read
+    .format("json")
+    .schema(carsDFSchema)
+    .load("src/main/resources/data/cars.json")
+
 
 
 }
