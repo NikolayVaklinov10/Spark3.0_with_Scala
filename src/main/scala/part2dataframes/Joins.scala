@@ -37,6 +37,11 @@ object Joins extends App {
   // 3) outer join = everything in the inner join + all the rows in BOTH tables, with nulls in where the data is missing
   guitaristsDF.join(bandsDF, joinCondition, "outer")
 
+  // 4) semi-joins = everything in the left DF for which there is a row in the right DF satisfying the condition
+  guitaristsDF.join(bandsDF, joinCondition, "left_semi")
+
+  // 5) anti-joins = everything in the left DF for which there is NO row in the right DF satisfying the condition
+  guitaristsDF.join(bandsDF, joinCondition, "left_anti")
 
 
 }
