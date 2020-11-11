@@ -1,7 +1,7 @@
 package part2dataframes
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{approx_count_distinct, col, count, countDistinct, min, sum}
+import org.apache.spark.sql.functions.{approx_count_distinct, avg, col, count, countDistinct, mean, min, stddev, sum}
 
 object Aggregations extends App {
 
@@ -39,6 +39,69 @@ object Aggregations extends App {
   moviesDF.select(sum(col("US_Gross")))
   // or
   moviesDF.selectExpr("sum(US_Gross)")
+
+  // avg for average
+  moviesDF.select(
+    mean(col("Rotten_Tomatoes_Rating")),
+    stddev(col("Rotten_Tomatoes_Rating"))
+  )//.show()
+
+  // Grouping
+
+  val countByGenreDF = moviesDF
+    .groupBy(col("Major_Genre")) // includes null
+    .count() // select count(*) from moviesDF group by Major_Genre
+
+  countByGenreDF.show()
+
+  val avgRatingByGenreDF = moviesDF
+    .groupBy(col("Major_Genre"))
+    .avg("IMDB_Rating")
+
+  val aggregationsByGenreDF = moviesDF
+    .groupBy(col("Major_Genre"))
+    .agg(
+      count("*").as("N_Movies"),
+      avg("IMDB_Rating").as("Avg_Rating")
+    ).orderBy(col("Avg_Rating"))
+
+  aggregationsByGenreDF.show()
+
+  /**
+   * Exercises
+   *
+   * 1. Sum up ALL the profits of ALL the movies in the DF
+   * 2. Count how many distinct directors we have
+   * 3. Show the mean and standard deviation of US gross revenue for the movies
+   * 4. Compute the average IMDB rating and the average US gross revenue PER DIRECTOR
+   */
+
+
+  // 1
+ moviesDF.select((col("US_Gross") + col("Worldwide_Gross") + col("US_DVD_Sales")).as("Total_Profit"))
+   .select(sum("Total_Profit"))
+  .show()
+
+  // 2
+  minRatingDF.select(countDistinct(col("Director")))
+    .show()
+
+  // 3
+  moviesDF.select(
+    mean(col("US_Gross")),
+    stddev(col("US_Gross"))
+  ).show()
+
+  // 4
+  moviesDF.groupBy("Director")
+    .agg(
+      avg("IMDB_Rating").as("Avg_Rating"),
+      sum("US_Gross").as("Total_US_Gross")
+    )
+    .orderBy(col("Avg_Rating").desc_nulls_last)
+    .show()
+
+
 
 
 //  genresCountDF.show()
