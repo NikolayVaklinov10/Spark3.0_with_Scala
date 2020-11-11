@@ -43,5 +43,17 @@ object Joins extends App {
   // 5) anti-joins = everything in the left DF for which there is NO row in the right DF satisfying the condition
   guitaristsDF.join(bandsDF, joinCondition, "left_anti")
 
+  // things to bear in mind
+  // guitaristsBandsDF.select("id", "band").show // this crashes
+
+  // option 1 - rename the column on which we are joining
+  guitaristsDF.join(bandsDF.withColumnRenamed("id", "band"), "band")
+
+  // option 2 - drop the dupe column
+  guitaristsBandsDF.drop(bandsDF.col("id"))
+
+  // option 3 - rename the offending column and keep the data
+  val bandsModDF = bandsDF.withColumnRenamed("id", "bandId")
+  guitaristsDF.join(bandsModDF, guitaristsDF.col("band") === bandsModDF.col("bandId"))
 
 }
