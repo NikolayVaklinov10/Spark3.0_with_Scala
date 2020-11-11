@@ -83,7 +83,7 @@ object Aggregations extends App {
   .show()
 
   // 2
-  minRatingDF.select(countDistinct(col("Director")))
+  moviesDF.select(countDistinct(col("Director")))
     .show()
 
   // 3
@@ -93,7 +93,8 @@ object Aggregations extends App {
   ).show()
 
   // 4
-  moviesDF.groupBy("Director")
+  moviesDF
+    .groupBy("Director")
     .agg(
       avg("IMDB_Rating").as("Avg_Rating"),
       sum("US_Gross").as("Total_US_Gross")
