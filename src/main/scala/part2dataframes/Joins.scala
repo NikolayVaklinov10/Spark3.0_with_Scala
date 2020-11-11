@@ -31,6 +31,11 @@ object Joins extends App {
   // 1) left outer joins ( everything in the inner join + all the rows in the LEFT table, with nulls in where the data is missing)
   guitaristsDF.join(bandsDF, joinCondition, "left_outer").show()
 
+  // 2) right outer joins ( everything in the inner join + all the rows in the RIGHT table, with nulls in where the data is missing)
+    guitaristsDF.join(bandsDF, joinCondition, "right_outer").show()
+
+  // 3) outer join = everything in the inner join + all the rows in BOTH tables, with nulls in where the data is missing
+  guitaristsDF.join(bandsDF, joinCondition, "outer")
 
 
 
