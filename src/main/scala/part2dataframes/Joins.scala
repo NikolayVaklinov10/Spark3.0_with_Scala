@@ -1,6 +1,7 @@
 package part2dataframes
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.expr
 
 object Joins extends App {
 
@@ -55,5 +56,8 @@ object Joins extends App {
   // option 3 - rename the offending column and keep the data
   val bandsModDF = bandsDF.withColumnRenamed("id", "bandId")
   guitaristsDF.join(bandsModDF, guitaristsDF.col("band") === bandsModDF.col("bandId"))
+
+  // using complex types
+  guitaristsDF.join(guitarsDF.withColumnRenamed("id", "guitarId"), expr("array_contains(guitars, guitarId)"))
 
 }
