@@ -1,7 +1,7 @@
 package part3typesAnddatasets
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.{col, lit, not}
+import org.apache.spark.sql.functions.{col, initcap, lit, not, regexp_extract, regexp_replace}
 
 object CommonTypes extends App {
 
@@ -39,6 +39,49 @@ object CommonTypes extends App {
 
   // correlation = number between -1 and 1
   println(moviesDF.stat.corr("Rotten_Tomatoes_Rating", "IMDB_Rating") /* corr is an ACTION */)
+
+  // Strings
+
+  val carsDF = spark.read
+    .option("inferSchema", "true")
+    .json("src/main/resources/data/cars.json")
+
+  // capitalization: initcap, lower, upper
+  carsDF.select(initcap(col("Name")))
+
+  // contains
+  carsDF.select("*").where(col("Name").contains("volkswagen"))
+
+  // regex
+  val regexString = "volkswagen|vw"
+  val vwDF = carsDF.select(
+    col("Name"),
+    regexp_extract(col("Name"), regexString, 0).as("regex_extract")
+  ).where(col("regex_extract") =!= "").drop("regex_extract")
+
+  vwDF.select(
+    col("Name"),
+    regexp_replace(col("Name"), regexString, "People's Car").as("regex_replace")
+  )
+
+  /**
+   * Exercise
+   *
+   * Filter the cars DF by a list of car names obtained by an API call
+   * Versions:
+   *   - contains
+   *   - regexes
+   */
+
+  def getCarNames: List[String] = List("Volkswagen", "Mercedes-Benz", "Ford")
+
+  // version 1 - regex
+  val complexRegex = getCarNames.map(_.toLowerCase()).mkString("|") // volskwagen|mercedes-benz|ford
+  carsDF.select(
+    col("Name"),
+    regexp_extract(col("Name"), complexRegex, 0).as("regex_extract")
+  ).where(col("regex_extract") =!= "")
+    .drop("regex_extract")
 
 
 }
