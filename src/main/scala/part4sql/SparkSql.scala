@@ -9,6 +9,7 @@ object SparkSql extends App {
     .appName("Spark SQL Practice")
     .config("spark.master", "local")
     .config("spark.sql.warehouse.dir", "src/main/resources/warehouse")
+//    .config("spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation", "true")
     .getOrCreate()
 
   val carsDF = spark.read
@@ -49,10 +50,27 @@ object SparkSql extends App {
     .option("dbtable", s"public.$tableName")
     .load()
 
-  val employeesDF = readTable("employees")
-  employeesDF.write
-    .mode(SaveMode.Overwrite)
-    .saveAsTable("employees")
+  def transferTables(tableNames: List[String], shouldWriteToWarehouse: Boolean = false) = tableNames.foreach { tableName =>
+    val tableDF = readTable(tableName)
+    tableDF.createOrReplaceTempView(tableName)
 
+    if (shouldWriteToWarehouse) {
+      tableDF.write
+        .mode(SaveMode.Overwrite)
+        .saveAsTable(tableName)
+    }
+  }
+
+  transferTables(List(
+    "employees",
+    "departments",
+    "titles",
+    "dept_emp",
+    "salaries",
+    "dept_manager")
+  )
+
+  // read DF from loaded Spark tables
+  val employeesDF2 = spark.read.table("employees")
 
 }
