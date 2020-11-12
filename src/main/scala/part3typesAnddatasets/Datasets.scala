@@ -2,6 +2,7 @@ package part3typesAnddatasets
 
 import java.sql.Date
 
+import org.apache.spark.sql.functions.{avg, col}
 import org.apache.spark.sql.{Dataset, Encoders, SparkSession}
 
 object Datasets extends App {
@@ -54,6 +55,27 @@ object Datasets extends App {
 
   // map, flatMap, fold, reduce, for comprehensions ...
   val carNamesDS = carsDS.map(car => car.Name.toUpperCase())
+
+  /**
+   * Exercises
+   *
+   * 1. Count how many cars we have
+   * 2. Count how many POWERFUL cars we have (HP > 140)
+   * 3. Average HP for the entire dataset
+   */
+
+  // 1
+  val carsCount = carsDS.count
+  println(carsCount)
+
+  // 2
+  println(carsDS.filter(_.Horsepower.getOrElse(0L) > 140).count)
+
+  // 3
+  println(carsDS.map(_.Horsepower.getOrElse(0L)).reduce(_ + _) / carsCount)
+
+  // also use the DF functions!
+  carsDS.select(avg(col("Horsepower")))
 
 
 }
