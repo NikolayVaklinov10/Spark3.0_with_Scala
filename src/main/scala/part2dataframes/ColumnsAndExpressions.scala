@@ -118,7 +118,7 @@ object ColumnsAndExpressions extends App {
     col("US_Gross"),
     col("Worldwide_Gross"),
     col("US_DVD_Sales"),
-    (col("US_Gross") + col("Worldwide_Gross") + col("DVD sales")).as("Total_Gross")
+    (((col("US_Gross") + col("Worldwide_Gross")+ col("US_DVD_Sales")))).as("Total_Gross")
   )
 
   val moviesProfitDF2 = moviesDF.selectExpr(
