@@ -40,6 +40,7 @@ object ManagingNulls extends App {
     "Director" -> "Unknown"
   ))
 
+
   // complex operations
   moviesDF.selectExpr(
     "Title",
